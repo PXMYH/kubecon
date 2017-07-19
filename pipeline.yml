@@ -1,0 +1,44 @@
+---
+groups:
+- name: create
+  jobs: 
+  - get-app
+  - uprev-app
+
+resources:
+- name: get-repo
+  type: git
+  source:
+    uri: git@github.com:PXMYH/web_app.git
+    branch: master
+    private_key: ((github_secret_key))
+
+- name: get-version
+  type: semver
+  source:
+    initial_version: 0.0.0
+    driver: git
+    uri: git@github.com:PXMYH/web_app.git
+    branch: master
+    file: version_file # file name to be saved with version
+    private_key: ((github_secret_key))
+
+jobs:
+- name: get-app
+  public: true
+  serial: true
+  plan:
+  - get: get-repo
+
+- name: uprev-app
+  public: true
+  serial: true
+  plan:
+  - get: get-version
+    params: {bump: patch}
+  - put: get-version
+    params: {file: get-version/number} # 'number' is the where semver saves version number to, but not a file, the actual file is defined in resource file variable
+
+- name: sanity-test
+
+- name: archive-app

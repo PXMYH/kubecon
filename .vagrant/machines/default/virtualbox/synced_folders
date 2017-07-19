@@ -1,0 +1,1 @@
+{"virtualbox":{"/vagrant":{"mount_options":["dmode=777","fmode=777","uid=900","gid=900"],"guestpath":"/vagrant","hostpath":"/Users/ProjectX/Documents/workspace/f1_analysis/ci","disabled":false,"__vagrantfile":true}}}
