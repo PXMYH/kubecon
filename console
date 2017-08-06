@@ -1,0 +1,9 @@
+#/bin/env bash
+
+function login() {
+	fly -t lite login -k
+}
+
+function update_pipeline() {
+	fly -t lite set-pipeline --config pipeline.yml --pipeline eagle --load-vars-from $SECRECT_FILE
+}

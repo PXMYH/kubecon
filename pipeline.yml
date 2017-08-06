@@ -2,8 +2,10 @@
 groups:
 - name: create
   jobs: 
-  - get-app
-  - uprev-app
+  - build
+  - sanity-test
+  - bump-version
+  - deployment
 
 resources:
 - name: get-repo
@@ -13,32 +15,49 @@ resources:
     branch: master
     private_key: ((github_secret_key))
 
-- name: get-version
+- name: version
   type: semver
   source:
     initial_version: 0.0.0
     driver: git
     uri: git@github.com:PXMYH/web_app.git
     branch: master
-    file: version_file # file name to be saved with version
+    # file name to be saved with version
+    file: version_file
     private_key: ((github_secret_key))
 
 jobs:
-- name: get-app
+- name: build
   public: true
   serial: true
   plan:
   - get: get-repo
-
-- name: uprev-app
+    trigger: true
+  - task: build
+    file: web_app/ci/tasks/browse.yml
+  
+  
+- name: bump-version
   public: true
   serial: true
   plan:
-  - get: get-version
+  - get: get-repo
+  - get: version
     params: {bump: patch}
-  - put: get-version
-    params: {file: get-version/number} # 'number' is the where semver saves version number to, but not a file, the actual file is defined in resource file variable
+  - put: version
+    # 'number' is the where semver saves version number to, but not a file, the actual file is defined in resource file variable
+    params: {file: version/number} 
 
 - name: sanity-test
+  public: true
+  serial: true
+  plan:
+  - get: get-repo
+    trigger: true
 
-- name: archive-app
+- name: deployment
+  public: true
+  serial: true
+  plan:
+  - get: get-repo
+    trigger: true

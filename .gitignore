@@ -1,1 +1,5 @@
-.vagrant
+.*
+!/.gitignore
+Vagrantfile
+.envrc
+.project
