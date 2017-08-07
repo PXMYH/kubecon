@@ -14,6 +14,17 @@ resources:
     uri: git@github.com:PXMYH/web_app.git
     branch: master
     private_key: ((github_secret_key))
+    
+- name: get-smoke-test
+  type: docker-image
+  source:
+    repository: cfcloudops/cf-smoke-tests
+    username: ((docker_hub_username))
+    password: ((docker_hub_password))
+
+- name: timer-30-min
+  type: time
+  source: {interval: 30m}
 
 - name: version
   type: semver
@@ -36,28 +47,44 @@ jobs:
   - task: build
     file: web_app/ci/tasks/browse.yml
   
-  
 - name: bump-version
   public: true
   serial: true
   plan:
   - get: get-repo
+    passed: [build, sanity-test]
   - get: version
     params: {bump: patch}
   - put: version
     # 'number' is the where semver saves version number to, but not a file, the actual file is defined in resource file variable
     params: {file: version/number} 
 
+# run Ginkgo framework sanity test suites
 - name: sanity-test
   public: true
-  serial: true
   plan:
   - get: get-repo
     trigger: true
+    passed: [build]
+  - task: get-sanity-test
+    file: web_app/ci/tasks/get-sanity-test-suites.yml
 
+# run cloud foundry smoke test suites
+- name: smoke-test
+  public: true
+  plan:
+  - get: timer-30-min
+    trigger: true
+  - get: get-smoke-test
+    trigger: true
+  - task: run-smoke-test
+    file: web_app/ci/tasks/get-smoke-test-suites.yml
+
+# deploy to S3 bucket
 - name: deployment
   public: true
   serial: true
   plan:
   - get: get-repo
     trigger: true
+    passed: [sanity-test, bump-version]
