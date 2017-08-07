@@ -45,7 +45,7 @@ jobs:
   - get: get-repo
     trigger: true
   - task: build
-    file: web_app/ci/tasks/browse.yml
+    file: get-repo/ci/tasks/browse.yml
   
 - name: bump-version
   public: true
@@ -67,7 +67,7 @@ jobs:
     trigger: true
     passed: [build]
   - task: get-sanity-test
-    file: web_app/ci/tasks/get-sanity-test-suites.yml
+    file: get-repo/ci/tasks/get-sanity-test-suites.yml
 
 # run cloud foundry smoke test suites
 - name: smoke-test
@@ -78,7 +78,7 @@ jobs:
   - get: get-smoke-test
     trigger: true
   - task: run-smoke-test
-    file: web_app/ci/tasks/get-smoke-test-suites.yml
+    file: get-repo/ci/tasks/get-smoke-test-suites.yml
 
 # deploy to S3 bucket
 - name: deployment
