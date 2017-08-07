@@ -8,7 +8,7 @@ groups:
   - deployment
 
 resources:
-- name: get-repo
+- name: web_app
   type: git
   source:
     uri: git@github.com:PXMYH/web_app.git
@@ -42,16 +42,17 @@ jobs:
   public: true
   serial: true
   plan:
-  - get: get-repo
+  - get: web_app
     trigger: true
   - task: build
-    file: get-repo/ci/tasks/browse.yml
+    params: 
+    file: web_app/ci/tasks/browse.yml
   
 - name: bump-version
   public: true
   serial: true
   plan:
-  - get: get-repo
+  - get: web_app
     passed: [build, sanity-test]
   - get: version
     params: {bump: patch}
@@ -63,11 +64,11 @@ jobs:
 - name: sanity-test
   public: true
   plan:
-  - get: get-repo
+  - get: web_app
     trigger: true
     passed: [build]
   - task: get-sanity-test
-    file: get-repo/ci/tasks/get-sanity-test-suites.yml
+    file: web_app/ci/tasks/get-sanity-test-suites.yml
 
 # run cloud foundry smoke test suites
 - name: smoke-test
@@ -78,13 +79,13 @@ jobs:
   - get: get-smoke-test
     trigger: true
   - task: run-smoke-test
-    file: get-repo/ci/tasks/get-smoke-test-suites.yml
+    file: web_app/ci/tasks/get-smoke-test-suites.yml
 
 # deploy to S3 bucket
 - name: deployment
   public: true
   serial: true
   plan:
-  - get: get-repo
+  - get: web_app
     trigger: true
     passed: [sanity-test, bump-version]
