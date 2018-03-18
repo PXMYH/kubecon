@@ -1,5 +1,10 @@
 ---
 groups:
+- name: stats
+  jobs:
+  - fetch
+  - process
+  - display
 - name: create
   jobs: 
   - build
@@ -8,6 +13,13 @@ groups:
   - deployment
 
 resources:
+- name: deploy-repo
+  type: git
+  source:
+    uri: git@github.com:PXMYH/ci.git
+    branch: master
+    private_key: ((github_secret_key))
+
 - name: web_app
   type: git
   source:
@@ -22,7 +34,7 @@ resources:
     username: ((docker_hub_username))
     password: ((docker_hub_password))
 
-- name: timer-30-min
+- name: every-30-min
   type: time
   source: {interval: 30m}
 
@@ -38,6 +50,32 @@ resources:
     private_key: ((github_secret_key))
 
 jobs:
+- name: fetch
+  serial: true
+  plan:
+  - get: every-30-min
+  - get: deploy-repo
+    trigger: true
+  - task: fetch_db
+    file: deploy-repo/tasks/fetch_db.yml
+
+- name: process
+  serial: true
+  plan:
+  - get: deploy-repo
+    passed: [fetch]
+    trigger: true
+  - task: process_info
+    file: deploy-repo/tasks/process_info.yml
+
+- name: display
+  serial: true
+  plan:
+  - get: deploy-repo
+    passed: [fetch, process]
+  - task: display
+    file: deploy-repo/tasks/display.yml
+
 - name: build
   public: true
   serial: true
@@ -74,7 +112,7 @@ jobs:
 - name: smoke-test
   public: true
   plan:
-  - get: timer-30-min
+  - get: every-30-min
     trigger: true
   - get: get-smoke-test
     trigger: true

@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+
+  type: docker-image
+
+  source:
+      repository: engineerbetter/pcf-ops
+      tag: latest
+
+inputs: 
+- name: deploy-repo
+
+run:
+  path:  deploy-repo/scripts/display.go
