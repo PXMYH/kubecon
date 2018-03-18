@@ -39,8 +39,8 @@ resources:
   type: docker-image
   source:
     repository: cfcloudops/cf-smoke-tests
-    username: ((docker_hub_username))
-    password: ((docker_hub_password))
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
 
 - name: every-30-min
   type: time
@@ -62,16 +62,16 @@ resources:
   source:
     driver: s3
     key: docker-tag
-    bucket: ((docker_image_bucket))
-    access_key_id: ((aws_access_key_id))
+    bucket:            ((docker_image_bucket))
+    access_key_id:     ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
 
 - name: f1-base-image
   type: docker-image
   source:
-    username: ((dockerhub_user))
-    password: ((dockerhub_password))
+    username:   ((dockerhub_username))
+    password:   ((dockerhub_password))
     repository: coeus77/f1_base_image
 
 - name: terraform-github-release
