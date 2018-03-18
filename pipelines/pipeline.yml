@@ -62,7 +62,7 @@ resources:
   source:
     driver: s3
     key: docker-tag
-    bucket: pcf-docker-pipeline
+    bucket: ((docker_image_bucket))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -85,7 +85,7 @@ resources:
   type: s3
   source:
     versioned_file: terraform/terraform
-    bucket: pcf-docker-pipeline
+    bucket: ((docker_image_bucket))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -138,7 +138,7 @@ resources:
   type: s3
   source:
     versioned_file: aws-cli/awscli-bundle.zip
-    bucket: pcf-docker-pipeline
+    bucket: ((docker_image_bucket))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -186,7 +186,6 @@ jobs:
     file: deploy-repo/tasks/display.yml
 
 - name: build
-  public: true
   serial: true
   plan:
   - get: web_app
@@ -196,7 +195,6 @@ jobs:
     file: web_app/ci/tasks/browse.yml
   
 - name: bump-version
-  public: true
   serial: true
   plan:
   - get: web_app
@@ -209,7 +207,6 @@ jobs:
 
 # run Ginkgo framework sanity test suites
 - name: sanity-test
-  public: true
   plan:
   - get: web_app
     trigger: true
@@ -219,7 +216,6 @@ jobs:
 
 # run cloud foundry smoke test suites
 - name: smoke-test
-  public: true
   plan:
   - get: every-30-min
     trigger: true
