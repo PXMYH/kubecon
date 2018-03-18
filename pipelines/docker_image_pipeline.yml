@@ -1,0 +1,265 @@
+
+---
+groups:
+- name: factory
+  jobs:
+  - get-terraform
+  - get-aws-cli
+  - compile-f1-base-image
+
+---
+resources:
+- name: f1-base-image-docker-tag
+  type: semver
+  source:
+    driver: s3
+    key: docker-tag
+    bucket: pcf-docker-pipeline
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: us-east-2
+
+- name: deploy-repo
+  type: git
+  source:
+    uri: git@github.com:PXMYH/ci.git
+    branch: master
+    private_key: ((github_secret_key))
+
+- name: f1-base-image
+  type: docker-image
+  source:
+    username: ((dockerhub_user))
+    password: ((dockerhub_password))
+    repository: coeus77/f1_base_image
+
+- name: terraform-github-release
+  type: github-release
+  source:
+    owner: hashicorp
+    repository: terraform
+    access_token: ((github_access_token)) # Avoids rate limits
+
+- name: terraform-s3-release
+  type: s3
+  source:
+    versioned_file: terraform/terraform
+    bucket: pcf-docker-pipeline
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: us-east-2
+
+- name: jq-github-release
+  type: github-release
+  source:
+    owner: stedolan
+    repository: jq
+    access_token: ((github_access_token)) # Avoids rate limits
+
+- name: concourse-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: concourse
+    access_token: ((github_access_token)) # Avoids rate limits
+
+- name: bosh-s3-release
+  type: s3
+  source:
+    bucket: bosh-cli-artifacts
+    regexp: 'bosh-cli-(2\.\d+(\.\d+)?)-linux-amd64'
+
+- name: yaml-github-release
+  type: github-release
+  source:
+    owner: mikefarah
+    repository: yq
+    access_token: ((github_access_token)) # Avoids rate limits
+
+- name: golang-s3-release
+  type: s3
+  source:
+    endpoint: storage.googleapis.com
+    bucket: golang
+    regexp: 'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
+
+- name: base-image
+  type: docker-image
+  source:
+    repository: cloudfoundry/cflinuxfs2
+
+- name: aws-cli-git
+  type: git
+  source:
+    uri: https://github.com/aws/aws-cli.git
+    tag_filter: 1.*.*
+- name: aws-cli-s3-release
+  type: s3
+  source:
+    versioned_file: aws-cli/awscli-bundle.zip
+    bucket: pcf-docker-pipeline
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: us-east-2
+
+- name: credhub-cli-github-release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: credhub-cli
+    access_token: ((github_access_token)) # Avoids rate limits
+
+- name: certstrap-github-release
+  type: github-release
+  source:
+    owner: square
+    repository: certstrap
+    access_token: ((github_access_token))
+
+jobs:
+- name: get-terraform
+  public: true
+  serial: true
+  plan:
+  - get: terraform-github-release
+    trigger: true
+  - task: download
+    config:
+      platform: linux
+      inputs:
+      - name: terraform-github-release
+      outputs:
+      - name: terraform
+      image_resource:
+        type: docker-image
+        source: {repository: busybox}
+      run:
+        path: ash
+        args:
+        - -c
+        - |
+          set -euo pipefail
+          version=$(cat terraform-github-release/version)
+          url="https://releases.hashicorp.com/terraform/${version}/terraform_${version}_linux_amd64.zip"
+          wget --output terraform.zip "$url"
+          unzip -d terraform terraform.zip
+  - put: terraform-s3-release
+    params: {file: terraform/terraform}
+
+- name: get-aws-cli
+  public: true
+  serial: true
+  plan:
+  - get: aws-cli-git
+    trigger: true
+  - task: download
+    config:
+      platform: linux
+      outputs:
+      - name: aws-cli
+      image_resource:
+        type: docker-image
+        source: {repository: busybox}
+      run:
+        path: ash
+        args:
+        - -c
+        - |
+          set -euo pipefail
+          url="https://s3.amazonaws.com/aws-cli/awscli-bundle.zip"
+          wget --output aws-cli/awscli-bundle.zip "$url"
+  - put: aws-cli-s3-release
+    params: {file: aws-cli/awscli-bundle.zip}
+
+- name: compile-f1-base-image
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: f1-base-image-docker-tag
+      params: {bump: minor}
+    # Download Dockerfile
+    - get: f1-ci-github
+      trigger: true
+    # Trigger on base image updates
+    - get: base-image
+      trigger: true
+    # Download dependancies
+    - get: terraform-s3-release
+      trigger: true
+      passed: [get-terraform]
+    - get: jq-github-release
+      trigger: true
+      params:
+        globs: [jq-linux64]
+    - get: concourse-github-release
+      trigger: true
+      params:
+        globs: [fly_linux_amd64]
+    - get: bosh-s3-release
+      trigger: true
+    - get: yaml-github-release
+      trigger: true
+      params:
+        globs: [yq_linux_amd64]
+    - get: golang-s3-release
+      trigger: true
+    - get: aws-cli-s3-release
+      trigger: true
+      passed: [get-aws-cli]
+    - get: credhub-cli-github-release
+      trigger: true
+      params:
+        globs: [credhub-linux-*.tgz]
+    - get: certstrap-github-release
+      trigger: true
+      params:
+        globs: [certstrap-v*-linux-amd64]
+  # Copy dependencies
+  - task: copy
+    config:
+      platform: linux
+      inputs:
+      - name: f1-ci-github
+      - name: terraform-s3-release
+      - name: cf-cli-s3-release
+      - name: jq-github-release
+      - name: om-github-release
+      - name: concourse-github-release
+      - name: bosh-s3-release
+      - name: bbl-github-release
+      - name: yaml-github-release
+      - name: golang-s3-release
+      - name: aws-cli-s3-release
+      - name: credhub-cli-github-release
+      - name: certstrap-github-release
+      outputs:
+      - name: builddir
+      image_resource:
+        type: docker-image
+        source: {repository: busybox}
+      run:
+        path: ash
+        args:
+          - -xeuc
+          - |
+            cp -r f1-ci-github/. builddir/
+            cp terraform-s3-release/terraform builddir/terraform
+            cp cf-cli-s3-release/cf builddir/cf
+            cp jq-github-release/jq-linux64 builddir/jq
+            cp om-github-release/om-linux builddir/om
+            cp concourse-github-release/fly_linux_amd64 builddir/fly
+            cp bosh-s3-release/bosh-cli-*-linux-amd64 builddir/bosh
+            cp bbl-github-release/bbl-v*_linux_x86-64 builddir/bbl
+            cp yaml-github-release/yq_linux_amd64 builddir/yaml
+            cp certstrap-github-release/certstrap-v*-linux-amd64 builddir/certstrap
+            cp golang-s3-release/go*.linux-amd64.tar.gz builddir/go.tar.gz
+            cp aws-cli-s3-release/awscli-bundle.zip builddir/awscli-bundle.zip
+            tar -C builddir -xzf credhub-cli-github-release/credhub-linux-*.tgz
+  - put: f1-ci-image
+    params:
+      build: builddir
+      tag: f1-base-image-docker-tag/version
+      tag_as_latest: true
+  - put: f1-base-image-docker-tag
+    params: {file: f1-base-image-docker-tag/version}

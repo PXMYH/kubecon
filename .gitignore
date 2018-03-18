@@ -3,3 +3,4 @@
 Vagrantfile
 .envrc
 .project
+/tmp
