@@ -82,6 +82,13 @@ resources:
     repository: terraform
     access_token: ((github_access_token)) # Avoids rate limits
 
+- name: golang-github-release
+  type: github-release
+  source:
+    owner: golang
+    repository: go
+    access_token: ((github_access_token)) # Avoids rate limits
+
 - name: terraform-s3-release
   type: s3
   source:
@@ -121,15 +128,15 @@ resources:
     repository: yq
     access_token: ((github_access_token)) # Avoids rate limits
 
-- name: golang-s3-release
-  type: s3
-  source:
-    endpoint: storage.googleapis.com
-    bucket: ((output_bucket_name))
-    region_name: us-east-2
-    access_key_id: ((aws_access_key_id))
-    secret_access_key: ((aws_secret_access_key))
-    regexp: pipelines/golang/'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
+# - name: golang-s3-release
+#   type: s3
+#   source:
+#     endpoint: storage.googleapis.com
+#     bucket: ((output_bucket_name))
+#     region_name: us-east-2
+#     access_key_id: ((aws_access_key_id))
+#     secret_access_key: ((aws_secret_access_key))
+#     regexp: pipelines/golang/'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
 
 - name: base-image
   type: docker-image
@@ -330,7 +337,7 @@ jobs:
       trigger: true
       params:
         globs: [yq_linux_amd64]
-    - get: golang-s3-release
+    - get: golang-github-release
       trigger: true
     - get: aws-cli-s3-release
       trigger: true
