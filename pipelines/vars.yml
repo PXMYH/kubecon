@@ -1,1 +1,1 @@
-docker_image_bucket: docker-pipeline-x7
+output_bucket_name: dpaas-artifacts

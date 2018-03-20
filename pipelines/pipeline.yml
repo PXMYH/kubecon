@@ -60,9 +60,10 @@ resources:
 - name: f1-base-image-docker-tag
   type: semver
   source:
+    initial_version: 0.0.0
     driver: s3
-    key: docker-tag
-    bucket:            ((docker_image_bucket))
+    key: docker/docker-tag
+    bucket:            ((output_bucket_name))
     access_key_id:     ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -85,7 +86,7 @@ resources:
   type: s3
   source:
     versioned_file: terraform/terraform
-    bucket: ((docker_image_bucket))
+    bucket: ((output_bucket_name))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -107,8 +108,8 @@ resources:
 - name: bosh-s3-release
   type: s3
   source:
-    bucket: bosh-cli-artifacts
-    regexp: 'bosh-cli-(2\.\d+(\.\d+)?)-linux-amd64'
+    bucket: ((output_bucket_name))
+    regexp: pipelines/bosh-cli-artifacts/'bosh-cli-(2\.\d+(\.\d+)?)-linux-amd64'
 
 - name: yaml-github-release
   type: github-release
@@ -121,8 +122,8 @@ resources:
   type: s3
   source:
     endpoint: storage.googleapis.com
-    bucket: golang
-    regexp: 'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
+    bucket: ((output_bucket_name))
+    regexp: pipelines/golang/'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
 
 - name: base-image
   type: docker-image
@@ -137,8 +138,8 @@ resources:
 - name: aws-cli-s3-release
   type: s3
   source:
-    versioned_file: aws-cli/awscli-bundle.zip
-    bucket: ((docker_image_bucket))
+    versioned_file: pipelines/aws-cli/awscli-bundle.zip
+    bucket: ((output_bucket_name))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
