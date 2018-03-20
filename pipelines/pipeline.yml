@@ -109,6 +109,9 @@ resources:
   type: s3
   source:
     bucket: ((output_bucket_name))
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: us-east-2
     regexp: pipelines/bosh-cli-artifacts/'bosh-cli-(2\.\d+(\.\d+)?)-linux-amd64'
 
 - name: yaml-github-release
@@ -123,6 +126,9 @@ resources:
   source:
     endpoint: storage.googleapis.com
     bucket: ((output_bucket_name))
+    region_name: us-east-2
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
     regexp: pipelines/golang/'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
 
 - name: base-image
