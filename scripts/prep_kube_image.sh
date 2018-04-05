@@ -5,9 +5,9 @@ echo $HOST_PRIVATE_KEY > host_priv.pem
 chmod 400 host_priv.pem
 
 cat << EOF > prep.sh
-  sudo apt-get remove docker docker-engine docker.io
-  sudo apt-get update
-  sudo apt-get install \
+  sudo apt-get remove -y docker docker-engine docker.io
+  sudo apt-get update -y
+  sudo apt-get install -y \
       apt-transport-https \
       ca-certificates \
       curl \
@@ -20,8 +20,8 @@ cat << EOF > prep.sh
   $(lsb_release -cs) \
   stable"
 
-  sudo apt-get update
-  sudo apt-get install docker-ce
+  sudo apt-get update -y
+  sudo apt-get install -y docker-ce
 
   sudo groupadd docker
   sudo usermod -aG docker $USER
