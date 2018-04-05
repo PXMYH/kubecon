@@ -416,6 +416,8 @@ jobs:
   plan:
   - get: deploy-repo
     trigger: true
+    passed:
+    - prepare
   - task: deploy-kube-image
     file: deploy-repo/tasks/deploy_kube_image.yml
     params:
