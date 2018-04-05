@@ -6,7 +6,7 @@ chmod 400 host_priv.pem
 
 cat << EOF > install_kube.sh
   sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
-  deb http://apt.kubernetes.io/ kubernetes-xenial main 
+  sudo deb http://apt.kubernetes.io/ kubernetes-xenial main 
 
   apt-get update -y
   apt-get install -y kubelet kubeadm kubectl kubernetes-cni
