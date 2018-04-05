@@ -34,3 +34,4 @@ echo "prep.sh content:"
 cat prep.sh
 
 scp -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i host_priv.pem prep.sh ubuntu@$HOST_IP:~
+ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i host_priv.pem ubuntu@$HOST_IP 'bash -s' < prep.sh
