@@ -29,6 +29,7 @@ cat << EOF > prep.sh
   sudo systemctl disable docker
 EOF
 
+echo "prep.sh content:"
 cat prep.sh
 
-scp prep.sh -i host_priv.pem ubuntu@$HOST_IP:~
+scp -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i host_priv.pem prep.sh ubuntu@$HOST_IP:~
