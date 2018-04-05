@@ -20,6 +20,11 @@ groups:
   - get-aws-cli
   - compile-f1-base-image
 
+- name: deploy-kube
+  jobs:
+  - prepare
+  - deploy
+
 resources:
 - name: deploy-repo
   type: git
@@ -392,3 +397,20 @@ jobs:
       tag_as_latest: true
   - put: f1-base-image-docker-tag
     params: {file: f1-base-image-docker-tag/version}
+
+
+- name: prepare
+  serial: true
+  plan:
+  - get: deploy-repo
+    trigger: true
+  - task: prep-kube-image
+    file: deploy-repo/tasks/prep_kube_image.yml
+
+- name: deploy
+  serial: true
+  plan:
+  - get: deploy-repo
+    trigger: true
+  - task: deploy-kube-image
+    file: deploy-repo/tasks/deploy_kube_image.yml

@@ -13,4 +13,4 @@ inputs:
 - name: deploy-repo
 
 run:
-  path:  deploy-repo/scripts/prep_kube_image.sh
+  path:  deploy-repo/scripts/deploy_kube_image.sh
