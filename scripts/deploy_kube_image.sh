@@ -14,7 +14,7 @@ cat << EOF > install_kube.sh
 
   curl https://get.k8s.io > kubernetes_install.sh
   chmod +x kubernetes_install.sh
-  ./kubernetes_install.sh
+  yes | ./kubernetes_install.sh
 EOF
 
 chmod +x install_kube.sh
