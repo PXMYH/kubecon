@@ -408,7 +408,8 @@ jobs:
     file: deploy-repo/tasks/prep_kube_image.yml
     params:
       HOST_IP: ((host_ip))
-      HOST_PRIVATE_KEY: ((host_private_key))
+      HOST_PRIVATE_KEY: |
+        ((host_private_key))
 
 - name: deploy
   serial: true
@@ -419,4 +420,5 @@ jobs:
     file: deploy-repo/tasks/deploy_kube_image.yml
     params:
       HOST_IP: ((host_ip))
-      HOST_PRIVATE_KEY: ((host_private_key))
+      HOST_PRIVATE_KEY: |
+        ((host_private_key))

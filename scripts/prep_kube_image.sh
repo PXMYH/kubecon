@@ -28,6 +28,7 @@ cat << EOF > prep.sh
   sudo systemctl enable docker
   sudo systemctl disable docker
 EOF
+chmod +x prep.sh
 
 echo "prep.sh content:"
 cat prep.sh
