@@ -5,6 +5,7 @@ echo "$HOST_PRIVATE_KEY" > host_priv.pem
 chmod 400 host_priv.pem
 
 cat << EOF > prep.sh
+  echo "[INFO] Installing pre-requisites"
   sudo apt-get remove -y docker docker-engine docker.io
   sudo apt-get update -y
   sudo apt-get install -y \
@@ -13,11 +14,12 @@ cat << EOF > prep.sh
       curl \
       software-properties-common
 
+  echo "[INFO] Installing docker"
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   sudo apt-key fingerprint 0EBFCD88
   sudo add-apt-repository \
   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) \
+  xenial \
   stable"
 
   sudo apt-get update -y
