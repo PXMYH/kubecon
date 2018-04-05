@@ -5,11 +5,16 @@ echo "$HOST_PRIVATE_KEY" > host_priv.pem
 chmod 400 host_priv.pem
 
 cat << EOF > install_kube.sh
-  sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
-  sudo deb http://apt.kubernetes.io/ kubernetes-xenial main 
+  #!/usr/bin/env bash
+  # https://www.techrepublic.com/article/how-to-quickly-install-kubernetes-on-ubuntu/
+  # sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
+  # sudo deb http://apt.kubernetes.io/ kubernetes-xenial main 
+  # apt-get update -y
+  # apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 
-  apt-get update -y
-  apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+  curl https://get.k8s.io > kubernetes_install.sh
+  chmod +x kubernetes_install.sh
+  ./kubernetes_install.sh
 EOF
 
 chmod +x install_kube.sh
