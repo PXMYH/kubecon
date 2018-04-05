@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # connect to host
-echo $HOST_PRIVATE_KEY > host_priv.pem
+echo "$HOST_PRIVATE_KEY" > host_priv.pem
 chmod 400 host_priv.pem
 
 cat << EOF > prep.sh
