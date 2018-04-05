@@ -406,6 +406,9 @@ jobs:
     trigger: true
   - task: prep-kube-image
     file: deploy-repo/tasks/prep_kube_image.yml
+    params:
+      HOST_IP: ((host_ip))
+      HOST_PRIVATE_KEY: ((host_private_key))
 
 - name: deploy
   serial: true
@@ -414,3 +417,6 @@ jobs:
     trigger: true
   - task: deploy-kube-image
     file: deploy-repo/tasks/deploy_kube_image.yml
+    params:
+      HOST_IP: ((host_ip))
+      HOST_PRIVATE_KEY: ((host_private_key))
