@@ -3,6 +3,8 @@ FROM alpine
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
+RUN apk add --no-cache --update bash
+
 COPY terraform /usr/bin/terraform
 COPY jq /usr/bin/jq
 COPY fly /usr/bin/fly
@@ -18,7 +20,7 @@ RUN tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \
     && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apk add --update \
     python-dev
 
 COPY awscli-bundle.zip .
