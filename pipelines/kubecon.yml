@@ -16,6 +16,7 @@ jobs:
 - name: deploy-kubecon
   plan:
   - get: deploy-repo
+    trigger: true
   - task: deploy-vault
     file: deploy-repo/kubecon/tasks/deploy-vault.yml
   - task: deploy-concourse
