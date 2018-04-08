@@ -1,7 +1,7 @@
 FROM alpine
 
 ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+ENV PATH ${GOPATH}/bin:/usr/local/go/bin:$PATH
 
 RUN apk add --no-cache --update bash
 
@@ -18,7 +18,7 @@ RUN ./prep_binaries.sh
 COPY go.tar.gz .
 RUN tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \
-    && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+    && mkdir -p "${GOPATH}/src" "${GOPATH}/bin" && chmod -R 777 "${GOPATH}"
 
 RUN apk add --update \
     python-dev
@@ -31,10 +31,10 @@ RUN unzip awscli-bundle.zip \
     && aws --version
 
 RUN go get -d github.com/onsi/ginkgo \
- && cd $GOPATH/src/github.com/onsi/ginkgo \
+ && cd ${GOPATH}/src/github.com/onsi/ginkgo \
  && git checkout v1.4.0 \
  && go install github.com/onsi/ginkgo/ginkgo \
- && rm -rf $GOPATH/src/* $GOPATH/pkg/*
+ && rm -rf ${GOPATH}/src/* ${GOPATH}/pkg/*
 
 RUN gem install --no-document --no-update-sources --verbose cf-uaac \
     && rm -rf /usr/lib/ruby/gems/2.3.0/cache/
