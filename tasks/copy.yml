@@ -1,0 +1,27 @@
+---
+platform: linux
+
+image_resource:
+
+  type: docker-image
+
+  source:
+      repository: busybox
+      tag: latest
+
+inputs:
+- name: deploy-repo
+- name: terraform-s3-release
+- name: jq-github-release
+- name: concourse-github-release
+- name: bosh-s3-release
+- name: yaml-github-release
+- name: golang-s3-release
+- name: aws-cli-s3-release
+- name: certstrap-github-release
+
+outputs:
+- name: builddir
+
+run:
+  path:  deploy-repo/scripts/copy.sh
