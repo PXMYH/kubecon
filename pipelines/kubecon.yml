@@ -1,9 +1,43 @@
 ---
 
+resources:
+- name: deploy-repo
+  type: git
+  source:
+    uri: git@github.com:PXMYH/ci.git
+    branch: master
+    private_key: ((github_secret_key))
+
+- name: every-day
+  type: time
+  source: {interval: 24h}
+
 jobs:
-- name: hello-world
+- name: deploy-kubecon
   plan:
-  - task: say-hello
+  - get: deploy-repo
+  - task: deploy-vault
+    file: deploy-repo/kubecon/tasks/deploy-vault.yml
+  - task: deploy-concourse
+    file: deploy-repo/kubecon/tasks/deploy-vault.yml
+
+- name: cleanup
+  plan:
+  - get: deploy-repo
+    trigger: true
+    passed:
+    - deploy-kubecon
+  - task: cleanup
+    file: deploy-repo/kubecon/tasks/cleanup.yml
+
+- name: smoketest
+  plan:
+  - get: every-day
+  - get: deploy-repo
+    trigger: true
+    passed:
+    - cleanup
+  - task: check-secret
     config:
       platform: linux
       image_resource:
