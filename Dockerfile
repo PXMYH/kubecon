@@ -4,7 +4,6 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 COPY terraform /usr/bin/terraform
-COPY cf /usr/bin/cf
 COPY jq /usr/bin/jq
 COPY fly /usr/bin/fly
 COPY bosh /usr/bin/bosh

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-names=( terraform jq bosh yaml certstrap)
+names=( terraform fly jq bosh yaml certstrap)
 for name in "${names[@]}"
 do
   chmod +x /usr/bin/$name
