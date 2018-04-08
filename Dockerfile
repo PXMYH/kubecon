@@ -5,13 +5,13 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN apk add --no-cache --update bash
 
-COPY terraform /usr/bin/terraform
-COPY jq /usr/bin/jq
-COPY fly /usr/bin/fly
-COPY bosh /usr/bin/bosh
-COPY yaml /usr/bin/yaml
-COPY yaml /usr/bin/yq
-COPY certstrap /usr/bin/certstrap
+COPY terraform /usr/local/bin/terraform
+COPY jq /usr/local/bin/jq
+COPY fly /usr/local/bin/fly
+COPY bosh /usr/local/bin/bosh
+COPY yaml /usr/local/bin/yaml
+COPY yaml /usr/local/bin/yq
+COPY certstrap /usr/local/bin/certstrap
 COPY prep_binaries.sh .
 RUN ./prep_binaries.sh
 
