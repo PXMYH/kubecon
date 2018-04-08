@@ -1,7 +1,4 @@
-FROM alpine
-
-ENV GOPATH /go
-ENV PATH ${GOPATH}/bin:/usr/local/go/bin:$PATH
+FROM alpine:3.7
 
 RUN apk add --no-cache --update bash
 
@@ -15,9 +12,12 @@ COPY certstrap /usr/local/bin/certstrap
 COPY prep_binaries.sh .
 RUN ./prep_binaries.sh
 
+ENV GOPATH /go
+ENV PATH ${GOPATH}/bin:/usr/local/go/bin:$PATH
 COPY go.tar.gz .
 RUN tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \
+    && export PATH="/usr/local/go/bin:$PATH" \
     && mkdir -p "${GOPATH}/src" "${GOPATH}/bin" && chmod -R 777 "${GOPATH}"
 
 RUN apk add --update \
