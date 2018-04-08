@@ -35,8 +35,8 @@ services:
     container_name: kubecon-db
     environment:
       POSTGRES_DB: concourse
-      POSTGRES_USER: concourse-user
-      POSTGRES_PASSWORD: concourse-pass
+      POSTGRES_USER: ${postgres_username}
+      POSTGRES_PASSWORD: ${postgres_password}
       PGDATA: /database
 
   concourse-web:
@@ -54,16 +54,16 @@ services:
       - "./keys/web:/concourse-keys"
     restart: unless-stopped # required so that it retries until concourse-db comes up
     environment:
-      CONCOURSE_BASIC_AUTH_USERNAME: pipeline
-      CONCOURSE_BASIC_AUTH_PASSWORD: xnuUcqMOt1OkF6oarKJLrYcS4DRuXlmu
-      CONCOURSE_EXTERNAL_URL: http://52.14.202.238:8080
+      CONCOURSE_BASIC_AUTH_USERNAME: ${concourse_main_username}
+      CONCOURSE_BASIC_AUTH_PASSWORD: ${concourse_main_password}
+      CONCOURSE_EXTERNAL_URL: ${concourse_server_ip}
       CONCOURSE_POSTGRES_HOST: concourse-db
-      CONCOURSE_POSTGRES_USER: concourse
-      CONCOURSE_POSTGRES_PASSWORD: changeme
+      CONCOURSE_POSTGRES_USER: ${postgres_username}
+      CONCOURSE_POSTGRES_PASSWORD: ${postgres_password}
       CONCOURSE_POSTGRES_DATABASE: concourse
       CONCOURSE_VAULT_URL: http://vault:8200
       CONCOURSE_VAULT_PATH_PREFIX: /concourse
-      CONCOURSE_VAULT_CLIENT_TOKEN: 5662e9f8-5de9-18b2-2278-0e018c568f7c 
+      CONCOURSE_VAULT_CLIENT_TOKEN: ${vault_fake_token}
       CONCOURSE_VAULT_INSECURE_SKIP_VERIFY: "true"
 
   concourse-worker:
@@ -75,8 +75,8 @@ services:
       - concourse-web
     depends_on:
       - concourse-web
-    volumes: 
+    volumes:
       - "./keys/worker:/concourse-keys"
-    restart: unless-stopped
+    restart: always
     environment:
       CONCOURSE_TSA_HOST: concourse-web
