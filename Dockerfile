@@ -5,10 +5,7 @@ RUN apk add --no-cache --update \
     python-dev \
     ruby ruby-irb ruby-rake ruby-io-console ruby-bigdecimal ruby-json ruby-bundler \
     libressl libstdc++ tzdata ca-certificates \
-    && apk add --virtual build-dependencies \
-           build-base \
-           ruby-dev \
-           libressl-dev \
+    && apk add --virtual build-dependencies build-base ruby-dev libressl-dev \
     &&  echo 'gem: --no-document' > /etc/gemrc
 
 COPY terraform /usr/local/bin/terraform
@@ -26,9 +23,8 @@ ENV PATH /go/bin:/usr/local/go/bin:$PATH
 COPY go.tar.gz .
 RUN tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \
-    && export PATH="/usr/local/go/bin:$PATH" \
     && chmod -R 777 "/usr/local/go/bin" \
-    && mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
+    && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 $GOPATH
 
 COPY awscli-bundle.zip .
 RUN unzip awscli-bundle.zip \
@@ -36,8 +32,6 @@ RUN unzip awscli-bundle.zip \
     && ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws \
     && rm -r awscli-bundle \
     && aws --version
-RUN ls -al /usr/local/go/bin \
-    && echo $PATH
 
 RUN ["/bin/bash", "-c", "ls -al /usr/local/go/bin"] \
  && ["/bin/bash", "-c", "ls -al echo $PATH"] \
