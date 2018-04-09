@@ -275,7 +275,7 @@ jobs:
   - aggregate:
     - get: hermes-docker-tag
       params: 
-        bump: minor
+        bump: patch
     # Download Dockerfile
     - get: deploy-repo
       trigger: true
