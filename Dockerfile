@@ -17,11 +17,13 @@ RUN ./prep_binaries.sh
 
 ENV GOPATH /go
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
+COPY go.tar.gz .
 RUN tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \
     && chmod -R 777 "/usr/local/go/bin" \
     && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 $GOPATH
 
+COPY awscli-bundle.zip .
 RUN unzip awscli-bundle.zip \
     && rm awscli-bundle.zip \
     && ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws \
