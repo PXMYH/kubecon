@@ -25,6 +25,12 @@ groups:
   - prepare
   - deploy
 
+resource_types:
+- name: hashicorp-release
+  type: docker-image
+  source:
+    repository: starkandwayne/hashicorp-release-resource
+
 resources:
 - name: deploy-repo
   type: git
@@ -86,7 +92,7 @@ resources:
     owner: hashicorp
     repository: terraform
     access_token: ((github_access_token)) # Avoids rate limits
-
+    
 - name: terraform-s3-release
   type: s3
   source:
@@ -95,6 +101,11 @@ resources:
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
+
+- name: vault-release
+  type: hashicorp-release
+  source:
+    project: vault
 
 - name: jq-github-release
   type: github-release
@@ -298,7 +309,8 @@ jobs:
   plan:
   - aggregate:
     - get: hermes-docker-tag
-      params: {bump: minor}
+      params: 
+        bump: minor
     # Download Dockerfile
     - get: deploy-repo
       trigger: true
@@ -309,6 +321,10 @@ jobs:
     - get: terraform-s3-release
       trigger: true
       passed: [get-terraform]
+    - get: vault-release
+      trigger: true
+      params:
+        regexp: linux_amd64
     - get: jq-github-release
       trigger: true
       params:

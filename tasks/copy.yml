@@ -19,6 +19,7 @@ inputs:
 - name: golang-s3-release
 - name: aws-cli-s3-release
 - name: certstrap-github-release
+- name: vault-release
 
 outputs:
 - name: builddir

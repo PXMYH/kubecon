@@ -11,3 +11,5 @@ cp yaml-github-release/yq_linux_amd64 builddir/yaml
 cp certstrap-github-release/certstrap-v*-linux-amd64 builddir/certstrap
 cp golang-s3-release/go*.linux-amd64.tar.gz builddir/go.tar.gz
 cp aws-cli-s3-release/awscli-bundle.zip builddir/awscli-bundle.zip
+unzip vault-release/vault_*_linux_amd64.zip
+cp vault builddir/vault
