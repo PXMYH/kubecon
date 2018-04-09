@@ -11,7 +11,6 @@ image_resource:
 
 inputs:
 - name: deploy-repo
-- name: terraform-s3-release
 - name: jq-github-release
 - name: concourse-github-release
 - name: bosh-s3-release
@@ -19,6 +18,7 @@ inputs:
 - name: golang-s3-release
 - name: aws-cli-s3-release
 - name: certstrap-github-release
+- name: terraform-release
 - name: vault-release
 - name: consul-release
 
