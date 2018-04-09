@@ -66,6 +66,7 @@ resources:
   type: semver
   source:
     initial_version: 0.0.0
+    bump: patch
     driver: s3
     key: docker/docker-tag
     bucket:            ((output_bucket_name))
