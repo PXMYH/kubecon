@@ -8,13 +8,8 @@ RUN apk add --no-cache --update \
     && apk add --virtual build-dependencies build-base ruby-dev libressl-dev \
     &&  echo 'gem: --no-document' > /etc/gemrc
 
-COPY terraform /usr/local/bin/terraform
-COPY jq /usr/local/bin/jq
-COPY fly /usr/local/bin/fly
-COPY bosh /usr/local/bin/bosh
-COPY yaml /usr/local/bin/yaml
+COPY ["terraform", "jq", "fly", "bosh", "yaml","certstrap","/usr/local/bin/"]
 COPY yaml /usr/local/bin/yq
-COPY certstrap /usr/local/bin/certstrap
 COPY prep_binaries.sh .
 RUN ./prep_binaries.sh
 
