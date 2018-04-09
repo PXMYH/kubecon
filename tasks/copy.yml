@@ -20,6 +20,7 @@ inputs:
 - name: aws-cli-s3-release
 - name: certstrap-github-release
 - name: vault-release
+- name: consul-release
 
 outputs:
 - name: builddir

@@ -107,6 +107,11 @@ resources:
   source:
     project: vault
 
+- name: consul-release
+  type: hashicorp-release
+  source:
+    project: consul
+
 - name: jq-github-release
   type: github-release
   source:
@@ -322,6 +327,10 @@ jobs:
       trigger: true
       passed: [get-terraform]
     - get: vault-release
+      trigger: true
+      params:
+        regexp: linux_amd64
+    - get: consul-release
       trigger: true
       params:
         regexp: linux_amd64
