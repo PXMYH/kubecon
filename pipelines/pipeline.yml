@@ -114,6 +114,22 @@ resources:
     repository: concourse
     access_token: ((github_access_token)) # Avoids rate limits
 
+- name: cf-cli-github-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: cli
+    access_token: ((github_access_token)) # Avoids rate limits
+    
+- name: cf-cli-s3-release
+  type: s3
+  source:
+    versioned_file: cf/cf
+    bucket: pcf-docker-pipeline
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: eu-west-1
+
 - name: bosh-s3-release
   type: s3
   source:
@@ -245,6 +261,35 @@ jobs:
 
 # Following jobs are for building base docker images
 
+- name: get-cf-cli
+  public: true
+  serial: true
+  plan:
+  - get: cf-cli-github-release
+    trigger: true
+  - task: download
+    config:
+      platform: linux
+      inputs:
+      - name: cf-cli-github-release
+      outputs:
+      - name: cf
+      image_resource:
+        type: docker-image
+        source: {repository: busybox}
+      run:
+        path: ash
+        args:
+        - -c
+        - |
+          set -euo pipefail
+          version=$(cat cf-cli-github-release/version)
+          url="https://cli.run.pivotal.io/stable?release=linux64-binary&version=${version}&source=github-rel"
+          wget --output cli.tgz "$url"
+          tar -C cf -xzf cli.tgz
+  - put: cf-cli-s3-release
+    params: {file: cf/cf}
+
 - name: get-aws-cli
   serial: true
   plan:
@@ -283,6 +328,9 @@ jobs:
     - get: base-image
       trigger: true
     # Download dependancies
+    - get: cf-cli-s3-release
+      trigger: true
+      passed: [get-cf-cli]
     - get: terraform-release
       trigger: true
       params:
