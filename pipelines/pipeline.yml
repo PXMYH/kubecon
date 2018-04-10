@@ -17,6 +17,7 @@ groups:
 - name: factory
   jobs:
   - get-aws-cli
+  - get-cf-cli
   - compile-hermes
 
 - name: deploy-kube
@@ -120,7 +121,7 @@ resources:
     owner: cloudfoundry
     repository: cli
     access_token: ((github_access_token)) # Avoids rate limits
-    
+
 - name: cf-cli-s3-release
   type: s3
   source:
@@ -128,7 +129,7 @@ resources:
     bucket: pcf-docker-pipeline
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
-    region_name: eu-west-1
+    region_name: us-east-2
 
 - name: bosh-s3-release
   type: s3
