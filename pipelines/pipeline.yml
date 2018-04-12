@@ -144,13 +144,6 @@ resources:
     repository: yq
     access_token: ((github_access_token)) # Avoids rate limits
 
-- name: golang-s3-release
-  type: s3
-  source:
-    endpoint: storage.googleapis.com
-    bucket: golang
-    regexp: 'go(1\.\d+(\.\d+)?)\.linux-amd64\.tar.gz'
-
 - name: base-image
   type: docker-image
   source:
@@ -358,8 +351,6 @@ jobs:
       trigger: true
       params:
         globs: [yq_linux_amd64]
-    - get: golang-s3-release
-      trigger: true
     - get: aws-cli-s3-release
       trigger: true
       passed: [get-aws-cli]
@@ -383,7 +374,7 @@ jobs:
   
   - task: hermes-sanity-test
     file: deploy-repo/tasks/hermes-sanity-test.yml
-    
+
   - put: hermes-docker-tag
     params: 
       file: hermes-docker-tag/version

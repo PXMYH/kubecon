@@ -16,7 +16,6 @@ inputs:
 - name: cf-cli-s3-release
 - name: bosh-s3-release
 - name: yaml-github-release
-- name: golang-s3-release
 - name: aws-cli-s3-release
 - name: certstrap-github-release
 - name: terraform-release
