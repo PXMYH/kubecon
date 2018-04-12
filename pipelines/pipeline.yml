@@ -126,7 +126,7 @@ resources:
   type: s3
   source:
     versioned_file: cf/cf
-    bucket: pcf-docker-pipeline
+    bucket: ((output_bucket_name))
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
     region_name: us-east-2
@@ -380,6 +380,10 @@ jobs:
       build: builddir
       tag: hermes-docker-tag/version
       tag_as_latest: true
+  
+  - task: hermes-sanity-test
+    file: deploy-repo/tasks/hermes-sanity-test.yml
+    
   - put: hermes-docker-tag
     params: 
       file: hermes-docker-tag/version
