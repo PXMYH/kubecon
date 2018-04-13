@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-names=(fly cf jq bosh yaml terraform vault consul certstap yq)
+names=(fly cf jq bosh yaml terraform vault consul certstrap yq)
 for name in "${names[@]}"
 do
   chmod +x /usr/local/bin/$name
