@@ -10,5 +10,4 @@ yq -V
 vault version
 consul version
 aws cli --version
-certstrap --version
 uaac -v

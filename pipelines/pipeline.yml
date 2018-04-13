@@ -373,7 +373,7 @@ jobs:
       tag_as_latest: true
   
   - task: hermes-sanity-test
-    file: deploy-repo/tasks/hermes-sanity-test.yml
+    file: deploy-repo/tasks/hermes_sanity_test.yml
 
   - put: hermes-docker-tag
     params: 
