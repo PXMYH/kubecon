@@ -11,4 +11,4 @@ inputs:
 - name: deploy-repo
 
 run:
-  path:  deploy-repo/scripts/hermes-sanity-test.sh
+  path:  deploy-repo/scripts/hermes_sanity_test.sh
