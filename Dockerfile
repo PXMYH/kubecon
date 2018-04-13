@@ -1,7 +1,7 @@
 FROM golang:1.10.1-alpine3.7
 
 RUN apk add --no-cache --update \
-    bash python-dev \
+    bash python-dev git\
     ruby ruby-irb ruby-rake ruby-io-console ruby-bigdecimal ruby-json ruby-bundler \
     libressl libstdc++ tzdata ca-certificates \
     && apk add --virtual build-dependencies build-base ruby-dev libressl-dev \
