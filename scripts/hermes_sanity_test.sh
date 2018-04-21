@@ -11,3 +11,4 @@ vault version
 consul version
 aws cli --version
 uaac -v
+gpg --version
