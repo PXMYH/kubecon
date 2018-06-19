@@ -9,6 +9,7 @@ fly_download_url="https://github.com/concourse/concourse/releases/download/"
 wget ${fly_download_url}/${fly_version}/fly_linux_amd64 -O concourse-github-release/fly_linux_amd64
 cp concourse-github-release/fly_linux_amd64 builddir/fly
 cp cf-cli-s3-release/cf builddir/cf
+cp spruce-github-release/spruce-linux-amd64 builddir/spruce
 cp bosh-s3-release/bosh-cli-*-linux-amd64 builddir/bosh
 cp yaml-github-release/yq_linux_amd64 builddir/yaml
 cp certstrap-github-release/certstrap-v*-linux-amd64 builddir/certstrap
