@@ -115,6 +115,13 @@ resources:
     repository: concourse
     access_token: ((github_access_token)) # Avoids rate limits
 
+- name: spruce-github-release
+  type: github-release
+  source:
+    owner: geofffranks
+    repository: spruce
+    access_token: ((github_access_token)) # Avoids rate limits
+
 - name: cf-cli-github-release
   type: github-release
   source:
@@ -345,6 +352,10 @@ jobs:
       trigger: true
       params:
         globs: [fly_linux_amd64]
+    - get: spruce-github-release
+      trigger: true
+      params:
+        globs: [spruce-linux-amd64]
     - get: bosh-s3-release
       trigger: true
     - get: yaml-github-release

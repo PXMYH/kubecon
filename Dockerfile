@@ -5,6 +5,12 @@ RUN apk add --no-cache --update \
     ruby ruby-irb ruby-rake ruby-io-console ruby-bigdecimal ruby-json ruby-bundler \
     libressl libstdc++ tzdata ca-certificates \
     gpgme coreutils curl wget busybox-extras sed\
+
+
+
+
+
+    
     && apk add --virtual build-dependencies build-base ruby-dev libressl-dev \
     && echo 'gem: --no-document' > /etc/gemrc \
     && gem install --no-document --no-update-sources --verbose cf-uaac \
