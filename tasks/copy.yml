@@ -13,6 +13,7 @@ inputs:
 - name: deploy-repo
 - name: jq-github-release
 - name: concourse-github-release
+- name: spruce-github-release
 - name: cf-cli-s3-release
 - name: bosh-s3-release
 - name: yaml-github-release
