@@ -1,11 +1,12 @@
 FROM golang:1.10.1-alpine3.7
 
 RUN apk add --no-cache --update \
-    bash python-dev git\
+    bash python-dev py-pip git\
     ruby ruby-irb ruby-rake ruby-io-console ruby-bigdecimal ruby-json ruby-bundler \
     libressl libstdc++ tzdata ca-certificates \
-    gpgme coreutils curl wget busybox-extras sed\
+    gpgme coreutils curl wget busybox-extras sed \
     && apk add --virtual build-dependencies build-base ruby-dev libressl-dev \
+    && pip install boto3 \
     && echo 'gem: --no-document' > /etc/gemrc \
     && gem install --no-document --no-update-sources --verbose cf-uaac \
     && rm -rf /usr/lib/ruby/gems/2.4.0/cache/ \
